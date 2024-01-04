@@ -29,7 +29,7 @@ ggplot(summary, aes(y=mean_ploidy, x=cancer_type))+geom_boxplot(aes(x=reorder(ca
   geom_point(position = position_jitter(seed=17, width = 0.2), aes(color=cancer_type), size=2, alpha=1)+
   scale_color_manual(values = cancer_type_colors)
 
-#Summary of exonic mutation burden
+#PLot exonic mutation burden
 all_snv<-readRDS("Data/All_SNV.rds")
 all_snv_exonic<-all_snv[all_snv$Func.refGene=='exonic',]
 count_burden<-table(all_snv_exonic$patient)
