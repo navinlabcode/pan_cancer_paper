@@ -50,7 +50,7 @@ gene_anno <- function(CNA_type, gene_list,
   genes.annotation[genes.annotation == ""] <- NA
   labels <- genes.annotation[!is.na(genes.annotation)]
   positions <- which(!is.na(genes.annotation))
-  padding = unit.c(unit(2, "cm"), unit(1, "cm"),
+  padding = grid::unit.c(unit(2, "cm"), unit(1, "cm"),
                    unit(c(2, 1), "cm"))
   #Annotate clonal or subclonal
   col_labels<-vector()
@@ -163,3 +163,67 @@ plot_umap<-function(umap_data, color_cluster=get_colors()){
                    xlab("UMAP1"), ylab("UMAP2"))
   print(ggplot(umap_data) + geom_point(aes(x = UMAP1, y = UMAP2, color = cluster), alpha = 1, size = 2)  + scale_color_manual(values = color_cluster) + theme_classic() + my_theme)
 }
+
+#Plot kidney cancers
+#UMAP
+k1_umap<-readRDS("Data/K1_umap.rds")
+k2_umap<-readRDS("Data/K2_umap.rds")
+k3_umap<-readRDS("Data/K3_umap.rds")
+k4_umap<-readRDS("Data/K4_umap.rds")
+k5_umap<-readRDS("Data/K5_umap.rds")
+k6_umap<-readRDS("Data/K6_umap.rds")
+
+plot_umap(k1_umap)
+plot_umap(k2_umap)
+plot_umap(k3_umap)
+plot_umap(k4_umap)
+plot_umap(k5_umap)
+plot_umap(k6_umap)
+
+#Heatmaps
+library(ComplexHeatmap)
+
+#Read clustered single cell integer copy number profiles
+k1_int_clustered<-readRDS("Data/K1_int_clustered.rds")
+#Read consensus integer copy number profiles
+k1_int_consensus<-readRDS("Data/K1_int_consensus.rds")
+kidney_genes<-c("ARID1A", "BAP1", "CLTC", "HIF1A", "KDM5C", "KDM6A", "KMT2D", "MTOR", "NF2", "PBRM1", "PTK6", "SETD2",
+            "TFE3", "TSC1", "VHL", "TP53")
+plot_heatmap_int(int = k1_int_clustered, int.consensus = k1_int_consensus, ploidy_trunc = 4, genes = kidney_genes,
+                 cluster = k1_umap$cluster)
+
+k2_int_clustered<-readRDS("Data/K2_int_clustered.rds")
+k2_int_consensus<-readRDS("Data/K2_int_consensus.rds")
+plot_heatmap_int(int = k2_int_clustered, int.consensus = k2_int_consensus, ploidy_trunc = 4, genes = kidney_genes,
+                 cluster = k2_umap$cluster)
+
+
+#Plot lung cancers
+#UMAP
+l1_umap<-readRDS("Data/L1_umap.rds")
+l2_umap<-readRDS("Data/L2_umap.rds")
+l3_umap<-readRDS("Data/L3_umap.rds")
+l4_umap<-readRDS("Data/L4_umap.rds")
+l5_umap<-readRDS("Data/L5_umap.rds")
+l6_umap<-readRDS("Data/L6_umap.rds")
+
+plot_umap(l1_umap)
+plot_umap(l2_umap)
+plot_umap(l3_umap)
+plot_umap(l4_umap)
+plot_umap(l5_umap)
+plot_umap(l6_umap)
+
+#Heatmaps
+l1_int_clustered<-readRDS("Data/L1_int_clustered.rds")
+l1_int_consensus<-readRDS("Data/L1_int_consensus.rds")
+l1_genes<-c("ALK", "DDR2", "FGFR2", "HIP1", "NRG1", "PTPRT", "TP53", "TPM3", "KRAS", "EGFR")
+plot_heatmap_int(int = l1_int_clustered, int.consensus = l1_int_consensus, ploidy_trunc = 6, genes = l1_genes,
+                 cluster = l1_umap$cluster)
+
+l2_int_clustered<-readRDS("Data/L2_int_clustered.rds")
+l2_int_consensus<-readRDS("Data/L2_int_consensus.rds")
+l2_genes<-c("EGFR", "EZR", "FGFR2", "GRIN2A", "HIP1", "KDR", "KRAS", "RBM10",
+            "ROS1", "SMARCA4", "STK11", "TFG", "TP53")
+plot_heatmap_int(int = l2_int_clustered, int.consensus = l2_int_consensus, ploidy_trunc = 6, genes = l2_genes,
+                 cluster = l2_umap$cluster)
