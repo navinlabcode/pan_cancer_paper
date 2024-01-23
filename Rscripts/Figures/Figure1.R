@@ -50,7 +50,7 @@ ggplot(count_burden, aes(y=log_count, x=cancer_type))+geom_boxplot(aes(x=reorder
 #Oncomap
 library(maftools)
 #Generate a maf file
-pan.annovar.maf = annovarToMaf(annovar = 'Data/all_mutations.txt', refBuild = 'hg19',
+pan.annovar.maf = annovarToMaf(annovar = 'Data/All_mutations.txt', refBuild = 'hg19',
                                tsbCol = 'patient', MAFobj = TRUE)
 
 #Prepare the data for MutsigCV analysis
