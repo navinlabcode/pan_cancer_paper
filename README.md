@@ -4,7 +4,7 @@
 
 This repository contains the R scripts used to create the main figures for the manuscript titled: **A pan-cancer single-cell analysis of intratumoral copy number diversity and evolution**. 
 
-The `Rscripts` folder is divided into two subfolders: `Functions` and `Figures`. `Functions` includes the general functions used for the CNA analysis in the paper. `Figures` contains detailed step-by-step R code to generate the plots for main figures 1-6. The `Data` folder includes the pre-processed datasets used to plot these figures.
+The `Rscripts` folder is divided into two subfolders: `Functions` and `Figures`. `Functions` includes the general functions used for the CNA analysis in the paper. `Figures` contains detailed step-by-step R code to generate the plots for main figures 1-6. The `Data` folder includes the processed datasets used to plot these figures.
 
 The raw sequencing data is available at the Sequence Read Archive (SRA) under the accession number PRJNA1013415.
 
