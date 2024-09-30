@@ -68,8 +68,8 @@ ggplot(summary_exome, aes(y=MPD, x=TP53.status))+geom_boxplot(show.legend = FALS
   geom_point(position = position_jitter(seed=17, width = 0.2, height = 0.1), aes(color=cancer_type), size=2, alpha=1)+
   scale_color_manual(values = cancer_type_colors)
 
-#Plot the correlation between chromosome gains and MPD in clonal WGD samples
-df<-readRDS("Data/Pseudobulk_MPD_cWGD_samples.rds")
+#Plot the correlation between MRCA chromosome gains and MPD in clonal WGD samples
+df<-readRDS("Data/MRCA_MPD_cWGD_samples.rds")
 #In this data frame, if rel_gain is 1 and p_value<0.05, tumors with gains in that bin have higher MPD, if rel_gain is -1 and p_value<0.05, tumors with gains in that bin have lower MPD
 
 bins_in_cna_pipeline<-read.delim("Data/bins_in_cna_pipeline_bands.bed")
@@ -168,6 +168,68 @@ ggplot(df) + ggchr_back + ggaes +geom_point(
   aes(abspos, -log10(p_value), color=rel_gain)
 )+scale_color_manual(values=color_bin)
 
+#If we want to annotate genes
+#Gne locations
+genes_in_cna_pipeline<-read.delim('Data/Genes_in_bins_cna_pipeline.txt')
+dna_repair_genes<-c('TP53', 'KMT2C', 'ATM', 'BAP1', 'BRCA2', 'BRCA1', 'POLQ', 'PRKDC', 'ATR', 'MSH6', 'POLE',
+                    'REV3L', 'FANCM', 'CENPE', 'TP53BP1', 'CDK12', 'FANCD2', 'SHPRH', 'SLX4', 'EXO1', 'MSH4', 
+                    'MDC1', 'WRN', 'ERCC6', 'LIG1', 'TOPBP1', 'PALB2', 'BLM', 'FANCA', 'RAD50', 'MSH3', 'MLH3', 
+                    'CLK2', 'ERCC2',  'MLH1', 'TTK', 'MSH2', 'FANCB', 'FANCC', 'FANCE', 'FANCF', 'FANCG', 'FANCI', 
+                    'FANCL', 'BABAM1', 'BARD1', 'BRCC3', 'EME1', 'ABRAXAS1', 'MUS81', 'NBN', 'RAD51AP1', 'RAD51B', 
+                    'RAD51D', 'RAD52', 'RAD54B', 'RAD54L', 'RBBP8', 'RECQL', 'REV1', 'RTEL1', 'SEM1', 'UIMC1', 'BACH1', 
+                    'RAD51', 'RAD51C', 'RPA1', 'RPA2', 'CCNH', 'CDK7', 'CETN2', 'ERCC1', 'ERCC3', 'ERCC4', 'ERCC5',  
+                    'ERCC8', 'MMS19', 'MNAT1', 'POLK', 'RAD23A', 'RAD23B', 'RPA3', 'RPA4', 'APEX1', 'APEX2', 'APLF', 'LIG3', 
+                    'MBD4', 'MUTYH', 'OGG1', 'PARP1', 'PARP2', 'PARP3', 'SMUG1', 'TDG', 'UNG', 'XRCC1', 'DCLRE1C', 
+                    'LIG4', 'NHEJ1', 'POLL', 'POLM', 'XRCC4', 'XRCC5', 'XRCC6')
+
+cell_cycle_genes<-c("ABL1",  "ATM",  "ATR",  "CCNA1",   "CCNA2", "CCNB1", "CCNB2", "CCNB3", "CCND1", 'ORC2',
+                    "CCND2", "CCND3", "CCNE1", "CCNE2", "CCNH",  "CDK1", "CDK2",  "CDK4",  "CDK6",  "CDK7", 
+                    "CDKN1A", "CDKN1B", "CDKN1C", "CDKN2A", "CDKN2B", "CDKN2C", "CDKN2D",
+                    "CUL1", "DBF4", "EP300", "ESPL1", "HDAC1", "HDAC2", "MAD1L1", "MAD2L1","MAD2L2",  
+                    "MCM2", "MCM3", "MCM4", "MCM5", "MCM6", "MCM7", "MDM2", "MYC",
+                    "PLK1", "PRKDC", "PTTG1", "PTTG2",   "RAD21", "RB1", "RBL1", "RBX1", "SFN", "SMAD2",
+                    "SMAD3", "SMAD4", "SMC1A", "SMC1B", "SMC3", "STAG1", "STAG2", "TP53", "TTK" ) 
+
+cancer_genes<-c('MTOR',  'IDH1', 'BARD1',  'TOP1')
+
+all_genes<-c(cell_cycle_genes, dna_repair_genes, cancer_genes)
+all_genes<-unique(all_genes)
+all_genes_pos<-genes_in_cna_pipeline[genes_in_cna_pipeline$gene %in% all_genes,]
+gene_annotation<-c()
+gene_annotation_color<-c()
+for(i in 1:nrow(all_genes_pos)){
+  if((!all_genes_pos$gene[i] %in% dna_repair_genes) && (!all_genes_pos$gene[i] %in% cell_cycle_genes)){
+    gene_annotation<-c(gene_annotation, 'cancer_gene')
+    gene_annotation_color<-c(gene_annotation_color, 'black')
+  }
+  else if(all_genes_pos$gene[i] %in% dna_repair_genes){
+    gene_annotation<-c(gene_annotation, 'DNA_damage')
+    gene_annotation_color<-c(gene_annotation_color, 'green')
+  }
+  else{
+    gene_annotation<-c(gene_annotation, 'cell_cycle')
+    gene_annotation_color<-c(gene_annotation_color, 'chocolate')
+  }
+}
+df1<-data.frame()
+for(i in 1:nrow(all_genes_pos)){
+  df1<-rbind(df1, df[all_genes_pos$bin[i],])
+}
+
+df1<-mutate(df1, all_genes_pos$gene, gene_annotation, gene_annotation_color)
+colnames(df1)[ncol(df1)-2]<-'gene'
+
+ggplot(df) + ggchr_back + ggaes +geom_point(
+  aes(abspos, -log10(p_value), color=rel_gain), size=1
+)+scale_color_manual(values=color_bin)+ggrepel::geom_text_repel(
+  data = subset(df1, p_value < 0.05), color=subset(df1, p_value < 0.05)$gene_annotation_color,
+  aes(x=abspos, y=-log10(p_value), label = gene),
+  size = 5, max.overlaps = 40, nudge_x = 0.5, nudge_y = 0.5,
+  box.padding = unit(0.35, "lines"),
+  point.padding = unit(0.3, "lines")
+)
+
+
 #Correlate MPD with overall survival
 survival<-read.csv('Data/survival_data.csv')
 colnames(survival)<-c('cancer_type', 'patient', 'age', 'os_months', 'os_event')
@@ -182,7 +244,9 @@ for(i in 1:nrow(summary_ordered)){
   }
 }
 mpd_group<-ifelse(summary_ordered$MPD>median(summary_ordered$MPD), 'High', 'Low')
-survival<-cbind(survival, dplyr::select(summary_ordered, 'CNA_burden'), ploidy.group, mpd_group)
+cna_group<-ifelse(summary_ordered$CNA_burden>median(summary_ordered$CNA_burden), 'High', 'Low')
+survival<-cbind(survival,  ploidy.group, mpd_group, cna_group)
+survival$age<-floor(survival$age/10)*10
 
 # Define the cut-off point
 cutoff <- 120
@@ -196,7 +260,7 @@ library(survival)
 
 #Adjust cancer type order
 survival$cancer_type<-factor(survival$cancer_type, levels = c('Breast', 'Bladder', 'Colon', 'GBM', 'Kidney', 'Lung', 'Ovary'))
-fit<-coxph(Surv(modified_time, modified_status) ~ age +  mpd_group  + cancer_type  + ploidy.group + CNA_burden, data = survival)
+fit<-coxph(Surv(modified_time, modified_status) ~ age +  mpd_group  + cancer_type  + ploidy.group + cna_group, data = survival)
 ggforest(fit)
 
 #Plot gene clonality
