@@ -42,6 +42,7 @@ genomic_gd<-function(dist, k=10){
 }
 
 #Downsampling to normalize GD
+#If sectors are randomly sampled
 gd_downsampling<-function(seg, times=100, threads=10){
   #Get sector information
   sector<-str_extract(rownames(seg), "(S\\d+){1}")
@@ -55,6 +56,20 @@ gd_downsampling<-function(seg, times=100, threads=10){
                               mc.cores = threads)
   gd_mean<-mean(sapply(results, function(x) x[[1]]))
   #Make sure 4 sectors were sampled
+  no_sector<-mean(sapply(results, function(x) x[[2]]))
+  results<-list(gd=gd_mean, no_sector=no_sector)
+  return(results)
+}
+
+#If we want to restrict to certain combinations of sectors, we can input a sectors_combn
+gd_downsampling_restricted<-function(seg, sectors_combn, times=100, threads=10){
+  #Get sector information
+  sector<-str_extract(rownames(seg), "(S\\d+){1}")
+  set.seed(1245)
+  sample<-sample.int(nrow(sectors_combn), size = times, replace = TRUE)
+  results<-parallel::mclapply(sample, function(x) genomic_gd(dist=sc_tree_dist(df=seg[sector %in% sectors_combn[x,],])), 
+                              mc.cores = threads)
+  gd_mean<-mean(sapply(results, function(x) x[[1]]))
   no_sector<-mean(sapply(results, function(x) x[[2]]))
   results<-list(gd=gd_mean, no_sector=no_sector)
   return(results)

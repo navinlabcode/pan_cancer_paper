@@ -199,7 +199,8 @@ plot_umap<-function(umap_data, color_cluster=get_colors()){
   print(ggplot(umap_data) + geom_point(aes(x = UMAP1, y = UMAP2, color = cluster), alpha = 1, size = 2)  + scale_color_manual(values = color_cluster) + theme_classic() + my_theme)
 }
 
-myPalette <- colorRampPalette(RColorBrewer::brewer.pal(9, "YlOrRd")[-1])
+library('viridis')
+myPalette <- colorRampPalette(rev(plasma(20)))
 plot_umap_with_ploidy<-function(umap_data){
   #Re-order cells to leave outlier cells in the bottom of the umap plot
   umap_data<-split(umap_data, umap_data$cluster)
@@ -207,7 +208,7 @@ plot_umap_with_ploidy<-function(umap_data){
   umap_data<-do.call(rbind, umap_data)
   #Truncate outlier values
   umap_data$ploidy[umap_data$ploidy>4.5]<-4.5
-  umap_data$ploidy[umap_data$ploidy<1.5]<-1.5
+  umap_data$ploidy[umap_data$ploidy<1.7]<-1.7
   my_theme <- list(ggplot2::theme(axis.title.x = element_text(colour = "gray28", size = 20), axis.text.x = element_blank(),
                                   axis.ticks.x = element_blank(),axis.title.y = element_text(colour = "gray28", size = 20), 
                                   axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line = element_blank(),
@@ -215,7 +216,7 @@ plot_umap_with_ploidy<-function(umap_data){
                                   panel.border = element_rect(color = "black", fill = NA, size = 1)), 
                    xlab("UMAP1"), ylab("UMAP2"))
   print(ggplot(umap_data) + geom_point(aes(x = UMAP1, y = UMAP2, color = ploidy), size = 2)  + 
-          scale_colour_gradientn(colors = myPalette(100), limits=c(1.5, 4.5)) + theme_classic() + my_theme)
+          scale_colour_gradientn(colors = myPalette(100), limits=c(1.7, 4.5)) + theme_classic() + my_theme)
 }
 
 #G1
