@@ -204,15 +204,15 @@ l1_umap<-readRDS("Data/L1_umap.rds")
 l2_umap<-readRDS("Data/L2_umap.rds")
 l3_umap<-readRDS("Data/L3_umap.rds")
 l4_umap<-readRDS("Data/L4_umap.rds")
-l5_umap<-readRDS("Data/L5_umap.rds")
 l6_umap<-readRDS("Data/L6_umap.rds")
+l7_umap<-readRDS("Data/L7_umap.rds")
 
 plot_umap(l1_umap)
 plot_umap(l2_umap)
 plot_umap(l3_umap)
 plot_umap(l4_umap)
-plot_umap(l5_umap)
 plot_umap(l6_umap)
+plot_umap(l7_umap)
 
 #Heatmaps
 l1_int_clustered<-readRDS("Data/L1_int_clustered.rds")
