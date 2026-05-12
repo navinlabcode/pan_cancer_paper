@@ -2,7 +2,7 @@
 
 ## Instructions
 
-This repository contains the R scripts used to create the main figures for the manuscript titled: **A pan-cancer single-cell analysis of intratumoral copy number diversity and evolution**. 
+This repository contains the R scripts used to create the main figures for the manuscript titled: **A pan-cancer single-cell analysis of intratumoral copy number diversity and evolution (Cancer Discovery 2026)**. 
 
 The `Rscripts` folder is divided into two subfolders: `Functions` and `Figures`. `Functions` includes the general functions used for the CNA analysis in the paper. `Figures` contains detailed step-by-step R code to generate the plots for main figures 1-6. The `Data` folder includes the processed datasets used to plot these figures.
 
@@ -10,11 +10,8 @@ The raw sequencing data is available at the Sequence Read Archive (SRA) under th
 
 ## Dependencies
 
-Part of the R scripts were adapted from [*CopyKit*](https://github.com/navinlabcode/copykit) (v0.1.0). *CopyKit* can be installed using the following command:
+Part of the R scripts were adapted from [*CopyKit*](https://github.com/navinlabcode/copykit).
 
-```r
-devtools::install_github(repo = "navinlabcode/copykit", ref = "f709a48")
-```
 Session info:
 ```
 R version 4.1.2 (2021-11-01)
